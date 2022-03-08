@@ -25,6 +25,7 @@ router.get('/', async (req, res) => {
     }
 })
 
+
 //BASECAMP Create Route
 router.post('/', async(req, res) => {
     try {
@@ -34,5 +35,28 @@ router.post('/', async(req, res) => {
         res.send('error occured')
     }
 })
+
+
+//BASECAMP Delete Route
+router.delete('/:id', async (req, res) => {
+    try {
+        const deleteCampsite = await Campsite.deleteOne({_id: req.params.id})
+        res.json(deleteCampsite)
+    } catch(err) {
+        res.send('error occured')
+    }
+})
+
+
+//BASECAMP Update Route
+router.put('/:id', async(req, res) => {
+    try {
+        const updateCampsite = await Campsite.findByIdAndUpdate(req.params.id, req.body, {new:true})
+        res.json(updateCampsite)
+    } catch(err) {
+        res.send('error occured')
+    }
+})
+
 
 module.exports = router
