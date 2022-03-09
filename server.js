@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const authController = require('./controllers/auth')
 const basecampController = require('./controllers/basecamp')
 
 require('./db')
@@ -10,7 +11,7 @@ const PORT = 8000
 
 //MIDDLEWARE
 app.use(express.json())
-
+app.use("/basecamp/auth", authController);
 app.use('/basecamp', basecampController)
 
 
@@ -24,5 +25,5 @@ app.get('/', (req, res) => {
 
 
 app.listen(PORT, () => {
-    console.log('🎉🎊', `listening on port ${PORT}`, '🎉🎊',)
+    console.log(`listening on port ${PORT}`)
 })

@@ -6,6 +6,11 @@ const basecampSchema = mongoose.Schema({
     category: {type: String},
     payForSite: {type: Boolean, default: false},
     description: {type: String},
+    owner:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     likes: {type: Number, defualt: 0},
 }, {timestamps: true})
 
