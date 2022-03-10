@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const { createUserToken, requireToken, handleValidateOwnership } = require('../middleware/auth')
+
+
 
 router.post("/registration", (req, res) => {
     const passwordHash = bcrypt.hashSync(
@@ -28,7 +31,7 @@ router.post("/registration", (req, res) => {
 
 // SIGN IN
 // POST /auth/login
-router.post("/login", (req, res, next) => {
+router.post("/login", async (req, res, next) => {
     try {
       const loggingUser = req.body.username;
       const foundUser = await User.findOne({ username: loggingUser });

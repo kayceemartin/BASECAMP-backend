@@ -1,19 +1,11 @@
 const express = require("express");
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
-
+const { createUserToken } = require('../middleware/auth')
 const router = express.Router();
 
-// routes/controllers here
-
-//SIGN UP
-router.post("/register", async (req, res, next) => {});
-
-//SIGNIN
-router.post("/login", async (req, res, next) => {});
-
-
 const register = async (req, res, next) => {
+    console.log('registering')
     try {
       const salt = await bcrypt.genSalt(10);
       const passwordHash = await bcrypt.hash(req.body.password, salt);
@@ -38,5 +30,16 @@ const register = async (req, res, next) => {
         res.status(400).json({error : err.message});
     }
 };
+
+// routes/controllers here
+
+//SIGN UP
+router.post("/register", register);
+
+//SIGNIN
+router.post("/auth/login", async (req, res, next) => {});
+
+
+
 
 module.exports = router;

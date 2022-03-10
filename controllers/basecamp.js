@@ -1,6 +1,6 @@
 const express = require('express')
 const { route } = require('express/lib/application')
-const router = express.Router
+const router = express.Router()
 
 const Campsite = require('../models/BASECAMP')
 const { handleValidateOwnership, requireToken } = require('../middleware/auth')
@@ -10,10 +10,10 @@ const { handleValidateOwnership, requireToken } = require('../middleware/auth')
 router.get('/:id', async (req, res) =>{
     try {
         const {id} = req.params
-        const oneCampsite = await Campsite.findById(id)
+        const foundCampsite = await Campsite.findById(id)
         .populate("creator")
         .exec();
-        res.json(oneCampsite)
+        res.json(foundCampsite)
     } catch(err) {
         res.send('error occcured')
     }
@@ -23,8 +23,9 @@ router.get('/:id', async (req, res) =>{
 //BASECAMP Index Route
 router.get('/', async (req, res) => {
     try {
-        const foundCampsites = await Campsite.find().populate('creator','username-_id').exec()
-        res.json(foundCampsites)
+        const foundCampsites = await Campsite.find()
+        // .populate('creator','username-_id').exec()
+        res.status(200).json(foundCampsites)
     } catch(err) {
         res.send('error occcured')
     }
@@ -32,8 +33,9 @@ router.get('/', async (req, res) => {
 
 
 //BASECAMP Create Route
-router.post('/', requireToken, (req, res, next) => {
+router.post('/', requireToken, async(req, res, next) => {
     try {
+      req.body.owner = req.user.id
         const newCampsite = await Campsite.create(req.body)
         res.status(200).json(newCampsite);
     } catch(err) {
@@ -45,7 +47,7 @@ router.post('/', requireToken, (req, res, next) => {
 
 
 //BASECAMP Delete Route
-router.delete("/:id", handleValidateId, requireToken, (req, res, next) => {
+router.delete("/:id", requireToken, async (req, res, next) => {
     try {
       handleValidateOwnership(req, await Campsite.findById(req.params.id));
       const deletedCampsite = await Campsite.findByIdAndRemove(req.params.id);
@@ -57,7 +59,7 @@ router.delete("/:id", handleValidateId, requireToken, (req, res, next) => {
 
 
 //BASECAMP Update Route
-router.put("/:id", requireToken, (req, res, next) => {
+router.put("/:id", requireToken, async(req, res, next) => {
     try {
       handleValidateOwnership(req, await Campsite.findById(req.params.id));
       const updatedCampsite = await Campsite.findByIdAndUpdate(
