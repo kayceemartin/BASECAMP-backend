@@ -27,6 +27,7 @@ const register = async (req, res, next) => {
             res.status(400).json({error: "oops something went wrong"})
         }
     }catch (err) {
+        console.log(err)
         res.status(400).json({error : err.message});
     }
 };
