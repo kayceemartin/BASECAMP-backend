@@ -2,7 +2,12 @@ const express = require('express')
 const app = express()
 const authController = require('./controllers/auth')
 const basecampController = require('./controllers/basecamp')
+
 const cors = require('cors')
+app.use(express.json());
+app.use(express.urlencoded({
+    extended: true
+}))
 
 require('./db')
 
@@ -33,6 +38,16 @@ app.get('/', (req, res) => {
     res.status(200).json({
         body: "you have found the BASECAMP app"
     })
+})
+
+app.post('/get-data', (req, res) => {
+    CommentModel.find({}, (err, data) => {
+        if(err){
+            console.log(err)
+        }else {
+            res.send(data);
+        }
+    }).limit(req.body.limitNum)
 })
 
 

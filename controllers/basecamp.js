@@ -11,8 +11,9 @@ router.get('/:id', async (req, res) =>{
     try {
         const {id} = req.params
         const foundCampsite = await Campsite.findById(id)
-        .populate("creator")
+        .populate("owner")
         .exec();
+        console.log(foundCampsite)
         res.json(foundCampsite)
     } catch(err) {
         res.send('error occcured')
@@ -34,9 +35,13 @@ router.get('/', async (req, res) => {
 
 //BASECAMP Create Route
 router.post('/', requireToken, async(req, res, next) => {
+  console.log(req.user)
+  console.log('hitting post route')
     try {
       req.body.owner = req.user.id
+      console.log(req.body)
         const newCampsite = await Campsite.create(req.body)
+        console.log(newCampsite)
         res.status(200).json(newCampsite);
     } catch(err) {
         res.status(404).json({

@@ -7,28 +7,28 @@ const router = express.Router();
 const register = async (req, res, next) => {
     console.log('registering')
     try {
-      const salt = await bcrypt.genSalt(10);
-      const passwordHash = await bcrypt.hash(req.body.password, salt);
+        const salt = await bcrypt.genSalt(10);
+        const passwordHash = await bcrypt.hash(req.body.password, salt);
 
-      const pwStore = req.body.password;
+        const pwStore = req.body.password;
 
-      req.body.password = passwordHash;
+        req.body.password = passwordHash;
 
-      const newUser = await User.create(req.body);
-      if(newUser) {
-          req.body.password = pwStore;
-          const authenticatedUserToken = createUserToken (req, newUser);
-          res.status(201).json({
-              user: newUser,
-              isLoggedIn: true,
-              token: authenticatedUserToken,
-          });
-      } else {
-            res.status(400).json({error: "oops something went wrong"})
+        const newUser = await User.create(req.body);
+        if (newUser) {
+            req.body.password = pwStore;
+            const authenticatedUserToken = createUserToken(req, newUser);
+            res.status(201).json({
+                user: newUser,
+                isLoggedIn: true,
+                token: authenticatedUserToken,
+            });
+        } else {
+            res.status(400).json({ error: "oops something went wrong" })
         }
-    }catch (err) {
+    } catch (err) {
         console.log(err)
-        res.status(400).json({error : err.message});
+        res.status(400).json({ error: err.message });
     }
 };
 
@@ -38,7 +38,21 @@ const register = async (req, res, next) => {
 router.post("/register", register);
 
 //SIGNIN
-router.post("/auth/login", async (req, res, next) => {});
+router.post("/login", async (req, res, next) => {
+    try {
+        const loggingUser = req.body.username;
+        const foundUser = await User.findOne({ username: loggingUser });
+        const token = await createUserToken(req, foundUser);
+        console.log(token)
+        res.status(200).json({
+            user: foundUser,
+            isLoggedIn: true,
+            token,
+        });
+    } catch (err) {
+        res.status(401).json({ error: err.message });
+    }
+});
 
 
 
